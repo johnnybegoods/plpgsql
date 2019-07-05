@@ -1,0 +1,28 @@
+CREATE TRIGGER InsereNovoResponsavel AFTER INSERT ON
+usuario FOR EACH ROW EXECUTE PROCEDURE
+inserenovousuario();
+
+------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION InsereNovoUsuario()
+RETURNS TRIGGER AS $$
+DECLARE novo_id INTEGER;
+DECLARE hoje DATE;
+BEGIN
+novo_id := (select max(id)+1 from acesso);
+INSERT INTO acesso(id, id_pessoa,id_mod)
+VALUES (novo_id, NEW.id_pessoa, 2);
+
+--novo_id := (select max(id)+1 from acesso);
+--INSERT INTO acesso(id, id_pessoa,id_mod)
+--VALUES (novo_id, NEW.id_pessoa, 3); 
+
+hoje := (SELECT date_trunc('month',current_date));
+novo_id := (select max(id_comp) from competencia);
+novo_id := novo_id + 1;
+INSERT INTO competencia(id_comp, competencia, id_responsavel, situacao)
+VALUES (novo_id, hoje, NEW.id_pessoa, 'ABERTO');
+
+RETURN NEW;
+END;$$ LANGUAGE plpgsql;

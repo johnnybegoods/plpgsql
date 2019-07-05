@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION contaPrecoMaiorQue(param float)
+RETURNS INTEGER AS $$
+BEGIN
+	RETURN (SELECT count(precos.modelo)
+		FROM ((SELECT computador.modelo, computador.preco FROM computador) UNION
+		(SELECT laptop.modelo, laptop.preco FROM laptop) UNION
+		(SELECT impressora.modelo, impressora.preco FROM impressora))as precos
+		WHERE precos.preco > param);
+END;
+$$ LANGUAGE PLPGSQL;
